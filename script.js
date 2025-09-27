@@ -153,3 +153,11 @@ const viewProductDetails = (e) => {
 for (let i = 0; i < btns.length; i++) {
   btns[i].addEventListener("click", viewProductDetails);
 }
+//cart listener
+document.addEventListener('click', (e) => {
+  if (!e.target.classList.contains('qty-btn')) return;
+  const input = e.target.parentElement.querySelector('.qty-input');
+  const step = e.target.textContent.trim() === '+' ? 1 : -1;
+  const current = parseInt(input.value, 10) || 1;
+  input.value = Math.max(current + step, 1);
+});
