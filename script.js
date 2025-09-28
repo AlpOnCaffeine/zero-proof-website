@@ -14,25 +14,28 @@ const prefersReduced = window.matchMedia(
 ).matches;
 // if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) { /* no-op */}
 
-//Order Summary 
+//Order Summary
 // Sample order data
 const orderItems = [
-  { name: 'The Sun', price: 10, quantity: 1 },
-  { name: 'The Fool', price: 10, quantity: 1},
+  { name: "Product A", price: 12.99, quantity: 1 },
+  { name: "Product B", price: 5.5, quantity: 2 },
+  { name: "Product C", price: 20.0, quantity: 1 },
 ];
 
 function renderOrderSummary() {
-  const itemList = document.getElementById('cart-items');
-  const orderTotalSpan = document.getElementById('order-total');
+  const itemList = document.getElementById("cart-items");
+  const orderTotalSpan = document.getElementById("order-total");
   let total = 0;
 
   // Clear existing items
-  itemList.innerHTML = '';
+  itemList.innerHTML = "";
 
   // Add each item to the list
-  orderItems.forEach(item => {
-    const listItem = document.createElement('li');
-    listItem.textContent = `${item.name} Bottle Size - $${(item.price * item.quantity).toFixed(2)}`;
+  orderItems.forEach((item) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${item.name} (x${item.quantity}) - $${(
+      item.price * item.quantity
+    ).toFixed(2)}`;
     itemList.appendChild(listItem);
     total += item.price * item.quantity;
   });
@@ -42,21 +45,21 @@ function renderOrderSummary() {
 }
 
 // Call the function to render the summary when the page loads
-document.addEventListener('DOMContentLoaded', renderOrderSummary);
+document.addEventListener("DOMContentLoaded", renderOrderSummary);
 
 // Example of adding a new item (could be triggered by user action)
 function addItemToOrder(name, price, quantity) {
   orderItems.push({ name, price, quantity });
-  renderOrderSummary();}
+  renderOrderSummary();
+}
 
-  function show(shown, hidden){
-    document.getElementById(shown).style.display='block';
-    document.getElementById(hidden).style.display='none';
-    return false;
-  }
+function toggleMenu() {
+  const menu = document.querySelector(".menu-links");
+  const icon = document.querySelector(".hamburger-icon");
+  menu.classList.toggle("open");
+  icon.classList.toggle("open");
+}
 
-
-  
 // Mocktail product details
 
 const mocktailsArray = [
@@ -150,6 +153,7 @@ const viewProductDetails = (e) => {
 for (let i = 0; i < btns.length; i++) {
   btns[i].addEventListener("click", viewProductDetails);
 }
+
 //cart listener
 document.addEventListener('click', (e) => {
   if (!e.target.classList.contains('qty-btn')) return;
@@ -158,3 +162,75 @@ document.addEventListener('click', (e) => {
   const current = parseInt(input.value, 10) || 1;
   input.value = Math.max(current + step, 1);
 });
+
+// Adding and Subtracting from the cart 
+document.addEventListener("DOMContentLoaded", () => {
+  // Attach listeners to every cart item
+  document.querySelectorAll(".cart-item").forEach(item => {
+    const input = item.querySelector(".qty-input");
+    const plusBtn = item.querySelector(".qty-btn.plus");
+    const minusBtn = item.querySelector(".qty-btn.minus");
+
+    // increment
+    plusBtn.addEventListener("click", () => {
+      input.value = parseInt(input.value, 10) + 1;
+      updateCartTotals();
+    });
+
+    // decrement
+    minusBtn.addEventListener("click", () => {
+      input.value = Math.max(1, parseInt(input.value, 10) - 1);
+      updateCartTotals();
+    });
+  });
+
+  function updateCartTotals() {
+    let subtotal = 0;
+
+    document.querySelectorAll(".cart-item").forEach(item => {
+      const name = item.querySelector("h3").textContent.trim();
+      const qty = parseInt(item.querySelector(".qty-input").value, 10);
+
+      // Example price lookup (replace with real prices)
+      const prices = {
+        "The Sun": 12.99,
+        "The Siren": 12.99,
+        "The Fool": 12.99,
+        "The Magician": 12.99,
+        "The Oracle": 12.99
+      };
+
+      const price = prices[name] || 0;
+      const total = qty * price;
+
+      // update per-item price
+      const priceEl = item.querySelector(".cart-meta p");
+      priceEl.textContent = `$${total.toFixed(2)}`;
+
+      subtotal += total;
+    });
+
+    // Example fees
+    const taxes = subtotal * 0.1;
+    const delivery = subtotal > 0 ? 5 : 0;
+    const grandTotal = subtotal + taxes + delivery;
+
+    // Update order summary
+    const rows = document.querySelectorAll("#order-summary .summary-row span:last-child");
+    if (rows.length >= 3) {
+      rows[0].textContent = `$${subtotal.toFixed(2)}`; // Subtotal
+      rows[1].textContent = `$${taxes.toFixed(2)}`;    // Taxes
+      rows[2].textContent = `$${delivery.toFixed(2)}`; // Delivery
+    }
+
+    document.querySelector(".total-input").value = `$${grandTotal.toFixed(2)}`;
+  }
+
+// Run once on load
+  updateCartTotals();
+});
+// Update deck count (sum of quantities)
+const totalItems = Array.from(document.querySelectorAll(".qty-input"))
+  .reduce((sum, input) => sum + parseInt(input.value, 10), 0);
+
+document.querySelector("#your-cart h1 span").textContent = `(${totalItems})`;

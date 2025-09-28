@@ -1243,7 +1243,15 @@ hr {
   color: var(--figma-gold);
   border-radius: 6px;
 }
-
+/* removes the native browser number input arrows */
+.qty-input::-webkit-inner-spin-button,
+.qty-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-input {
+  -moz-appearance: textfield; /* Firefox */
+}
 .checkout-btn {
   width: 100%;
   margin-top: 1.5rem;
@@ -1398,3 +1406,4 @@ hr {
   padding-right: 1rem;
   padding-top: 1rem;
 }
+
