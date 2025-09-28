@@ -1456,17 +1456,6 @@ li{
   --figma-text: #CFB482;
 }
 
-#cart-page-main {
-  display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
-  align-items: flex-start;
-  gap: 2rem;
-  max-width: 1200px;
-  padding: 2rem;
-  margin: auto;
-}
-
 #your-cart {
   flex: 0 0 64%;
 }
@@ -1580,7 +1569,45 @@ li{
   background: var(--figma-gold); /* #CFB482 */
   color: var(--figma-dark);
 }
+/* body for cart main */
+/* Full-bleed PNG background for cart */
+#cart-page-main {
+  --cart-bg: url('Content/background.jpeg'); /* <-- background Jpeg path */
 
+  /* dark tint over the art to keep text legible */
+  background-image:
+    linear-gradient(rgba(28,26,39,.78), rgba(28,26,39,.78)),
+    var(--cart-bg);
+  background-position: center;
+  background-size: cover;     /* scales to fill */
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* subtle parallax (disable on iOS below) */
+  padding: 3rem 0;
+}
+
+/* iOS/mobile prefers no fixed backgrounds for performance */
+@media (max-width: 820px) {
+  #cart-page-main { background-attachment: scroll; }
+}
+
+/* === Cart two-column layout (force) === */
+.cart-inner{
+  display: flex;
+  flex-wrap: nowrap;          /* stay side-by-side */
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
+  margin: 20px;
+}
+
+#your-cart{     flex: 0 64%; min-width: 0; }
+#order-summary{ flex: 0 32%; min-width: 0; }
+
+/* Stack on small screens only */
+@media (max-width: 900px){
+  .cart-inner{ flex-wrap: wrap; }
+  #your-cart, #order-summary{ flex: 1 1 100%; }
+}
 
 /* Shop Page */
 
