@@ -1322,7 +1322,7 @@ hr {
 }
 
 .qty-input[type=number] {
-  -moz-appearance: textfield; /* Firefox */
+  -moz-appearance: textfield; /* tested on Firefox and chrome */
 }
 
 /* Custom look for qty input */
@@ -1776,43 +1776,259 @@ body {
     border-radius: 6px;
 }
 
-.checkout-btn {
-    width: 100%;
-    margin-top: 1.5rem;
-    padding: 1.25rem 0; /* Adjust as needed */
-    background: var(--figma-bronze); /* #9C704C */
-    color: var(--figma-dark); /* #252230 */
-    border: none;
-    border-radius: 12px;
-    font-family: 'Metamorphous', serif;
-    font-size: 2.25rem; /* was 2rem, now larger */
-    font-weight: 600; /* ensure legibility */
-    text-align: center;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    line-height: 1; /* keeps text vertically centered */
-}
+/* body for cart main */
 
-    .checkout-btn:hover {
-        background: var(--figma-gold); /* #CFB482 */
-        color: var(--figma-dark);
-    }
-/* body for cart main */ /* Full-bleed background on main */
+/* Full-bleed background on main */
 
+/* Background art (PNG) + legibility tint */
 #cart-page-main {
-    background: url('AdobeStock_829544376.jpg') center / cover no-repeat;
-    padding: 3rem 0; /* space around inner content */
+  --cart-bg: url('Content/background.png'); /* update path if needed */
+  background-image:
+    var(--cart-bg);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-attachment: fixed; /* parallax feel */
+  padding: 3rem 0;
 }
-/* Keep content constrained and centered */
+@media (max-width: 820px){
+  #cart-page-main { background-attachment: scroll; } /* iOS perf */
+}
 
-.cart-inner {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 2rem;
-    display: flex;
-    flex-wrap: nowrap;
-    justify-content: center;
-    align-items: flex-start;
-    gap: 2rem;
+/* Outer container (2 columns) */
+.cart-inner{
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 2rem;
+}
+
+/* Panels */
+#your-cart,
+#order-summary{
+  background: rgba(37,34,48,.88);           /* #252230 w/ opacity */
+  border: 1px solid var(--figma-gold);
+  color: var(--figma-text);
+  padding: 2rem;
+  border-radius: 16px;
+  backdrop-filter: blur(2px);
+}
+
+/* Column widths (desktop) */
+#your-cart{     flex: 0 0 64%; min-width: 0; }
+#order-summary{ flex: 0 0 32%; min-width: 0; }
+
+/* Stack on small screens */
+@media (max-width: 900px){
+  .cart-inner{ flex-wrap: wrap; }
+  #your-cart, #order-summary{ flex: 1 1 100%; }
+}
+
+/* Section titles */
+.deck-title{
+  font-family: 'Metamorphous', serif;
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  color: var(--figma-gold);
+  letter-spacing: 0.5px;
+}
+
+/* Cart items */
+.cart-item{
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+.cart-img{
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.cart-info h3{
+  margin: 0;
+  font-size: 1rem;
+  color: var(--figma-gold);
+}
+.cart-info p{
+  margin: .25rem 0;
+  font-size: .9rem;
+}
+
+/* ===== Quantity controls ===== */
+
+/* Remove default number spinners */
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button{
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-input[type="number"]{
+  -moz-appearance: textfield;  /* Firefox */
+}
+
+/* Input look */
+.qty-input{
+  width: 44px;                /* a touch wider */
+  height: 34px;
+  text-align: center;
+  background: var(--figma-dark);
+  border: 1px solid var(--figma-gold);
+  color: var(--figma-gold);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  padding: 0;
+}
+
+/* + / – buttons */
+.qty{
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+}
+.qty-btn{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--figma-gold);
+  color: var(--figma-dark);
+  font-size: 1.25rem; /* bigger + / – glyphs */
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  transition: filter .15s ease, transform .02s ease;
+}
+.qty-btn:hover{ filter: brightness(1.05); }
+.qty-btn:active{ transform: translateY(1px); }
+.qty-btn:focus-visible{ outline: 2px solid var(--figma-gold); outline-offset: 2px; }
+
+/* Trash button (optional polish) */
+.trash{
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--figma-gold);
+  border: 1px solid var(--figma-gold);
+  cursor: pointer;
+}
+.trash:hover{ background: rgba(207,180,130,.15); }
+
+/* Summary rows & total */
+.summary-row{
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: .75rem;
+  padding: .35rem 0;
+}
+.total-row{
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: .75rem;
+  margin-top: .5rem;
+}
+.total-input{
+  background: var(--figma-dark);
+  border: 1px solid var(--figma-gold);
+  color: var(--figma-gold);
+  border-radius: 8px;
+  padding: .5rem .75rem;
+}
+
+/* Checkout button */
+.checkout-btn{
+  width: 100%;
+  margin-top: 1.5rem;
+  padding: 1.25rem 0;
+  background: var(--figma-bronze);      /* #9C704C */
+  color: var(--figma-dark);             /* #252230 */
+  border: none;
+  border-radius: 12px;
+  font-family: 'Metamorphous', serif;
+  font-size: 2.25rem;
+  font-weight: 600;
+  text-align: center;
+  cursor: pointer;
+  transition: background .2s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,.3);
+  line-height: 1;
+}
+.checkout-btn:hover{
+  background: var(--figma-gold);        /* #CFB482 */
+  color: var(--figma-dark);
+}
+#order-summary {
+  flex: 0 0 32%;
+  max-width: 420px;
+  padding: 1.25rem 1.5rem;
+  border-radius: 16px;
+  background: rgba(37,34,48,.88);
+  border: 1px solid var(--figma-gold);
+  color: var(--figma-text);
+  backdrop-filter: blur(2px);
+  position: sticky; /* keeps it in view while scrolling */
+  top: 1rem;
+}
+
+#order-summary .deck-title {
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+/* rows */
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: .75rem;
+  padding: .5rem 0;
+  border-bottom: 1px dashed rgba(207,180,130,.25); /* subtle divider */
+}
+.summary-row:last-of-type { border-bottom: none; margin-bottom: .5rem; }
+
+/* Total row with input */
+.total-row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: .75rem;
+  margin-top: .5rem;
+}
+.total-row label {
+  font-weight: 700;
+  color: var(--figma-gold);
+}
+
+/* total input */
+.total-input {
+  width: 100%;
+  height: 40px;
+  border: 1px solid var(--figma-gold);
+  border-radius: 10px;
+  background: var(--figma-dark);
+  color: var(--figma-gold);
+  padding: 0 .75rem;
+  text-align: right;  /* numbers align cleanly to the right */
+  box-shadow: inset 0 1px 2px rgba(0,0,0,.25);
+}
+
+/* button spacing */
+#order-summary .checkout-btn { margin-top: 1rem; }
+
+/* small screens: let it fill width nicely */
+@media (max-width: 900px){
+  #order-summary { position: static; max-width: none; }
 }
